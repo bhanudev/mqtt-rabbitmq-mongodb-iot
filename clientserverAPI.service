@@ -1,0 +1,14 @@
+[Unit]
+Description=Client and Server API for MQTT and MongoDB
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/home/bhanu/task
+ExecStart=/bin/bash -c '/home/bhanu/task/myenv/bin/python /home/bhanu/task/client_script.py & /home/bhanu/task/myenv/bin/python /home/bhanu/task/server_script.py'
+Restart=always
+Environment="CONFIG_FILE=/home/bhanu/task/config.ini"
+
+[Install]
+WantedBy=multi-user.target
+

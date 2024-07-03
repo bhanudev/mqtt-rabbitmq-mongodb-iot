@@ -1,36 +1,30 @@
+import paho.mqtt.client as mqtt
 import time
 import random
-import paho.mqtt.client as mqtt
+import configparser
 
-broker_host = '172.16.1.243'
-broker_port = 1883
+config = configparser.ConfigParser()
+config.read('config.ini')
 
-topic = 'status_updates'
+broker_host = config.get('MQTT', 'broker_host')
+broker_port = config.getint('MQTT', 'broker_port')
+topic = config.get('MQTT', 'topic')
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("connected successfully")
+        print("connected to broker")
     else:
-        print(f"connection failed with the result code {rc}")
+        print(f"connection failed with code {rc}")
 
-def emit_status():
-    client = mqtt.Client(protocol=mqtt.MQTTv311)
-    client.on_connect = on_connect
+mqtt_client = mqtt.Client()
+mqtt_client.on_connect = on_connect
 
-    client.connect(broker_host, broker_port, 60)
-    client.loop_start()
+mqtt_client.connect(broker_host, broker_port, 60)
+mqtt_client.loop_start()
 
-    try:
-        while True:
-            status = random.randint(0, 6)
-            message = {"status": status}
-            client.publish(topic, str(message))
-            print(f"sent: {message}")
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("Disconnected")
-        client.disconnect()
-
-if __name__ == "__main__":
-    emit_status()
+while True:
+    status_message = {"status": random.randint(0, 6)}
+    mqtt_client.publish(topic, str(status_message))
+    print(f"sent message: {status_message}")
+    time.sleep(1)
 

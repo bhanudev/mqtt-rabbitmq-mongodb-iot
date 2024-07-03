@@ -2,13 +2,21 @@ import paho.mqtt.client as mqtt
 from pymongo import MongoClient
 from datetime import datetime
 from flask import Flask, request, jsonify
+import configparser
 
-broker_host = '172.16.1.243'
-broker_port = 1883
-topic = 'status_updates'
-mongo_uri = 'mongodb://localhost:27017/'
-db_name = 'mqtt_db'
-collection_name = 'status_data'
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+broker_host = config.get('MQTT', 'broker_host')
+broker_port = config.getint('MQTT', 'broker_port')
+topic = config.get('MQTT', 'topic')
+
+mongo_uri = config.get('MongoDB', 'mongo_uri')
+db_name = config.get('MongoDB', 'db_name')
+collection_name = config.get('MongoDB', 'collection_name')
+
+flask_host = config.get('Flask', 'host')
+flask_port = config.getint('Flask', 'port')
 
 app = Flask(__name__)
 
@@ -18,7 +26,7 @@ collection = db[collection_name]
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("connected to msg broker")
+        print("connected to message broker")
         client.subscribe(topic)
     else:
         print(f"connection failed with code {rc}")
@@ -48,7 +56,7 @@ def get_status_count():
         start_time = datetime.fromisoformat(start_time)
         end_time = datetime.fromisoformat(end_time)
     except ValueError:
-        return jsonify({"error": "invalid date format"}), 400
+        return jsonify({"error": "Invalid date format"}), 400
 
     pipeline = [
         {"$match": {"timestamp": {"$gte": start_time, "$lt": end_time}}},
@@ -59,4 +67,5 @@ def get_status_count():
     return jsonify(result)
 
 if __name__ == "__main__":
-    app.run(host= '172.16.1.243', port=5000)
+    app.run(host=flask_host, port=flask_port)
+
