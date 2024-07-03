@@ -31,57 +31,70 @@ project_root/
 
 ## Installing Dependencies
 Create a virtual env and install python dependencies
-
-> python3 -m venv myenv
-> source myenv/bin/> activate
-> pip install -r > requirements.txt
+```
+python3 -m venv myenv
+source myenv/bin/> activate
+pip install -r > requirements.txt
+```
 
 ## Configurations
 Copy the _**config.ini**_ file provided in the repository.
 
 
 ## Allow trafic on port 5000
-
-> firewall-cmd --zone=public --add-port-5000/tcp --permanent
-> firewall-cmd --zone=public --add-port-1883/tcp --permanent
-> firewall-cmd --reload
-
+```
+firewall-cmd --zone=public --add-port-5000/tcp --permanent
+firewall-cmd --zone=public --add-port-1883/tcp --permanent
+firewall-cmd --reload
+```
 ## Enable MQTT Plugin
-> rabbitmq-plugin enable rabbitmq_mqtt
+```
+rabbitmq-plugin enable rabbitmq_mqtt
+```
 
 ## Configure RabbitMQ
 Edit the configuration file
-> vim /etc/rabbitmq/rabbitmq.conf
+```
+vim /etc/rabbitmq/rabbitmq.conf
+```
 
 In the above configuration file copy the bellow settings
 
-> Add the MQTT settings
-> mqtt.default_user = guest
-> mqtt.default_pass = guest
-> mqtt.allow_anonymous = true
-> mqtt.tcp_listeners = [1883]
+```
+Add the MQTT settings
+mqtt.default_user = guest
+mqtt.default_pass = guest
+mqtt.allow_anonymous = true
+mqtt.tcp_listeners = [1883]
+```
+
 
 # Running the project
 ##### Running the Scripts Manually
 **Client_script**
->python client_script.py
-
+```
+python client_script.py
+```
 **Server Script**
->python server_script.py
-
+```
+python server_script.py
+```
 ## Setting Up a Service
 **place the clientserverAPI.service file in the systemd directory**
 
-> cp clientserverAPI.service /etc/systemd/system/
-> systemctl daemon-reload
-> systemctl start clientserverAPI.service
-> systemctl enable clientserverAPI.service
-
+```
+cp clientserverAPI.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl start clientserverAPI.service
+systemctl enable clientserverAPI.service
+```
 ## Using the API
 
 Access the API endpoint to get the status count
 
->Curl "http:server_ip//:5000/status_count?start=2024-07-02T00:00:00&end=2024-07-03T00:00:00"
+```
+Curl "http:server_ip//:5000/status_count?start=2024-07-02T00:00:00&end=2024-07-03T00:00:00"
+```
 
 Replace the start and end time parameter with your desired date-time format
 
